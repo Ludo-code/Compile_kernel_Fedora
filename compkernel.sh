@@ -25,9 +25,9 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         echo -e "${RED}Erreur lors de l'installation.${OFF_COLOR}"
     fi
 
-    echo -e "${YELLOW}Veuillez entrer le numéro de la dernière version du noyau disponible sur kernel.org (ex: 5.12.14):${OFF_COLOR}"
+    echo -e "${YELLOW}Veuillez entrer le numéro de la dernière version du noyau disponible sur kernel.org (ex: 6.6.33):${OFF_COLOR}"
     read kernel_version
-    kernel_url="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$kernel_version.tar.xz"
+    kernel_url="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$kernel_version.tar.xz"
     echo -e "${BLUE}Téléchargement du noyau version $kernel_version...${OFF_COLOR}"
     wget $kernel_url -O linux-$kernel_version.tar.xz
 
