@@ -20,12 +20,12 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
         sudo dnf groupinstall "Development Tools"
         echo -e "${BLUE}Installation des dependances supplémentaires${OFF_COLOR}"
-        sudo dnf install wget bc
+        sudo dnf install wget bc xen
     else
         echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
         dnf groupinstall "Development Tools"
         echo -e "${BLUE}Installation des dependances supplémentaires${OFF_COLOR}"
-        dnf install wget bc
+        dnf install wget bc xen
     fi
 
     if [ $? -eq 0 ]; then
