@@ -46,17 +46,14 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         echo -e "${YELLOW}Préparation de la compilation${OFF_COLOR}"
         make -j"$(nproc)" clean
         make -j"$(nproc)" mrproper
-        make -j"$(nproc)" olddefconfig
         echo -e "${YELLOW}Lancement de la compilation du noyau${OFF_COLOR}"
-        make -j"$(nproc)"
+        make -j"$(nproc)" oldconfig
+        make -j"$(nproc)" bzImage
+        make -j"$(nproc)" modules
         echo -e "${YELLOW}Installation des modules${OFF_COLOR}"
         make -j"$(nproc)" modules_install
         echo -e "${YELLOW}Installation du noyau${OFF_COLOR}"
         make -j"$(nproc)" install
-        echo -e "${YELLOW}Génération du initramfs${OFF_COLOR}"
-        mkinitrd /boot/initramfs-$version.img $version
-        echo -e "${YELLOW}Changement de la config de grub2${OFF_COLOR}"
-        grub-mkconfig -o /boot/grub2/grub.cfg 
     else
         echo -e "${RED}Erreur lors de l'extraction.${OFF_COLOR}"
     fi
