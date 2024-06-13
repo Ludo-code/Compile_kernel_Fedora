@@ -18,9 +18,9 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
 
     if [ "$EUID" -ne 0 ]; then
         echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
-        sudo dnf groupinstall "Development Tools"
+        sudo dnf -y groupinstall "Development Tools"
         echo -e "${BLUE}Installation des dependances supplémentaires${OFF_COLOR}"
-        sudo dnf install wget bc xen
+        sudo dnf -y install wget bc xen
     else
         echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
         dnf groupinstall "Development Tools"
