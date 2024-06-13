@@ -44,15 +44,15 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         echo -e "${YELLOW}Entrer dans le répertoire...${OFF_COLOR}"
         cd linux-$kernel_version
         echo -e "${YELLOW}Préparation de la compilation${OFF_COLOR}"
-        make clean
-        make mrproper
-        make olddefconfig
+        make -j`nproc` clean
+        make -j`nproc` mrproper
+        make -j`nproc` olddefconfig
         echo -e "${YELLOW}Lancement de la compilation du noyau${OFF_COLOR}"
-        make
+        make -j`nproc`
         echo -e "${YELLOW}Installation des modules${OFF_COLOR}"
-        make modules_install
+        make -j`nproc` modules_install
         echo -e "${YELLOW}Installation du noyau${OFF_COLOR}"
-        make install
+        make -j`nproc` install
         echo -e "${YELLOW}Génération du initramfs${OFF_COLOR}"
         mkinitrd /boot/initramfs-$version.img $version
         echo -e "${YELLOW}Changement de la config de grub2${OFF_COLOR}"
