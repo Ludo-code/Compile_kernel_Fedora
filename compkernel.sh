@@ -17,10 +17,15 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
     sleep 5
 
     if [ "$EUID" -ne 0 ]; then
-        echo -e "${YELLOW}Veuillez entrer le mot de passe root pour continuer l'installation...${OFF_COLOR}"
-        sudo dnf install wget gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl-devel bc cpio tar elfutils-libelf-devel
+        echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
+        sudo dnf groupinstall "Development Tools"
+        echo -e "${BLUE}Installation des dependances supplémentaires${OFF_COLOR}"
+        sudo dnf install wget
     else
-        dnf install wget gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl-devel bc cpio tar elfutils-libelf-devel
+        echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
+        dnf groupinstall "Development Tools"
+        echo -e "${BLUE}Installation des dependances supplémentaires${OFF_COLOR}"
+        dnf install wget
     fi
 
     if [ $? -eq 0 ]; then
