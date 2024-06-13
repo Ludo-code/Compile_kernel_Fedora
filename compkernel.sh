@@ -8,6 +8,10 @@ OFF_COLOR='\033[0m'
 
 Fedora_version=$(cat /etc/fedora-release)
 
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${RED}Veuillez lancer ce script en tant que root${OFF_COLOR}"
+else
+
 if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
     echo -e "${GREEN}Installation des dépendances pour Fedora${OFF_COLOR}"
     sleep 5
@@ -29,7 +33,7 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
     read kernel_version
     kernel_url="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$kernel_version.tar.xz"
     echo -e "${BLUE}Téléchargement du noyau version $kernel_version...${OFF_COLOR}"
-    wget $kernel_url -O linux-$kernel_version.tar.xz
+    wget -f $kernel_url -O linux-$kernel_version.tar.xz
 
     if [ $? -eq 0 ]; then
     echo -e "${GREEN}Téléchargement réussi.${OFF_COLOR}"
@@ -63,4 +67,5 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
     fi
 else
     echo -e "${RED}Ce script est destiné à Fedora release 40 (Forty) uniquement.${OFF_COLOR}"
+fi
 fi
