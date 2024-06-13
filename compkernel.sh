@@ -33,7 +33,7 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
     read kernel_version
     kernel_url="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$kernel_version.tar.xz"
     echo -e "${BLUE}Téléchargement du noyau version $kernel_version...${OFF_COLOR}"
-    wget -f $kernel_url -O linux-$kernel_version.tar.xz
+    wget $kernel_url -O linux-$kernel_version.tar.xz
 
     if [ $? -eq 0 ]; then
     echo -e "${GREEN}Téléchargement réussi.${OFF_COLOR}"
