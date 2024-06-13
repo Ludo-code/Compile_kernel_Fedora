@@ -9,7 +9,7 @@ OFF_COLOR='\033[0m'
 Fedora_version=$(cat /etc/fedora-release)
 
 if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
-    echo -e "${GREEN}Installation des dépendances de dev sur Fedora${OFF_COLOR}"
+    echo -e "${GREEN}Installation des dépendances pour Fedora${OFF_COLOR}"
     sleep 5
 
     if [ "$EUID" -ne 0 ]; then
