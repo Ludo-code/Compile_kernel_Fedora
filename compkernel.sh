@@ -14,9 +14,9 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
 
     if [ "$EUID" -ne 0 ]; then
         echo -e "${YELLOW}Veuillez entrer le mot de passe root pour continuer l'installation...${OFF_COLOR}"
-        sudo dnf groupinstall "Development Tools"
+        sudo dnf install gcc clang rust bindgen-cli make bash binutils flex bison pahole util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs pcmciautils quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
     else
-        dnf groupinstall "Development Tools"
+        dnf install gcc clang rust bindgen-cli make bash binutils flex bison pahole util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs pcmciautils quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
     fi
 
     if [ $? -eq 0 ]; then
@@ -42,12 +42,13 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         echo -e "${YELLOW}Entrer dans le répertoire...${OFF_COLOR}"
         cd linux-$kernel_version
         echo -e "${YELLOW}Préparation de la compilation${OFF_COLOR}"
+        make clean
         make mrproper
         make olddefconfig
         echo -e "${YELLOW}Lancement de la compilation du noyau${OFF_COLOR}"
         make
         echo -e "${YELLOW}Installation des modules${OFF_COLOR}"
-        make module_install
+        make modules_install
         echo -e "${YELLOW}Installation du noyau${OFF_COLOR}"
         make install
         echo -e "${YELLOW}Génération du initramfs${OFF_COLOR}"
