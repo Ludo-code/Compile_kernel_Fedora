@@ -14,9 +14,9 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
 
     if [ "$EUID" -ne 0 ]; then
         echo -e "${YELLOW}Veuillez entrer le mot de passe root pour continuer l'installation...${OFF_COLOR}"
-        sudo dnf install gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
+        sudo dnf install wget gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
     else
-        dnf install gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
+        dnf install wget gcc clang rust bindgen-cli make bash binutils flex bison dwarves util-linux kmod e2fsprogs jfsutils xfsprogs squashfs-tools btrfs-progs quotatool ppp nfs-utils procps-ng mcelog openssl bc cpio tar 
     fi
 
     if [ $? -eq 0 ]; then
