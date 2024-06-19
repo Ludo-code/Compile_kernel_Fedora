@@ -51,8 +51,9 @@ if [ "$Fedora_version" = "Fedora release 40 (Forty)" ]; then
         make -j"$(nproc)"
         make -j"$(nproc)" modules
         make -j"$(nproc)" bzImage
-        echo -e "${YELLOW}Installation des modules${OFF_COLOR}"
+        echo -e "${YELLOW}Installation des modules & headers ${OFF_COLOR}"
         make -j"$(nproc)" modules_install
+        make -j"$(nproc)" headers_install
         echo -e "${YELLOW}Génération du System.map${OFF_COLOR}"
         make System.map
         echo -e "${YELLOW}Lancement de depmod${OFF_COLOR}"
