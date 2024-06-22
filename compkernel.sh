@@ -28,20 +28,20 @@ dnf install -y ncurses-devel make gcc bc bison flex elfutils-libelf-devel openss
 
 echo "Configuration du noyau..."
 cp /boot/config-$(uname -r) .config || erreur "Échec de la copie de la configuration actuelle"
-make olddefconfig || erreur "Échec de la configuration"
+make -j$(nproc) olddefconfig || erreur "Échec de la configuration"
 
 echo "Nettoyage avant compilation..."
-make clean || erreur "Échec du nettoyage"
-make mrproper || erreur "Échec de mrproper"
+make -j$(nproc) clean || erreur "Échec du nettoyage"
+make -j$(nproc) mrproper || erreur "Échec de mrproper"
 
 echo "Compilation du noyau..."
-make -j$(nproc) || erreur "Échec de la compilation du noyau"
+make -j$(nproc) -j$(nproc) || erreur "Échec de la compilation du noyau"
 
 echo "Compilation des modules..."
-make modules_install || erreur "Échec de la compilation des modules"
+make -j$(nproc) modules_install || erreur "Échec de la compilation des modules"
 
 echo "Installation du noyau..."
-make install || erreur "Échec de l'installation du noyau"
+make -j$(nproc) install || erreur "Échec de l'installation du noyau"
 
 echo "Mise à jour de GRUB..."
 grub2-mkconfig -o /boot/grub2/grub.cfg || erreur "Échec de la mise à jour de GRUB"
