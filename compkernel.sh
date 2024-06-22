@@ -1,96 +1,47 @@
-#!/bin/sh
+#!/bin/bash
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-OFF_COLOR='\033[0m'
-
-Fedora_version=$(cat /etc/fedora-release)
+function erreur {
+    echo "Erreur : $1"
+    exit 1
+}
 
 if [ "$EUID" -ne 0 ]; then
-    echo -e "${RED}Veuillez lancer ce script en tant que root${OFF_COLOR}"
-    exit 1
+    erreur "Ce script doit être exécuté avec des privilèges root. Utilisez sudo."
 fi
 
-case "$Fedora_version" in
-    "Fedora release 40 (Forty)")
-        echo -e "${GREEN}Installation des dépendances pour Fedora${OFF_COLOR}"
-        sleep 5
+read -p "Entrez la version du noyau à installer (ex: 5.12.9) : " KERNEL_VERSION
 
-        echo -e "${BLUE}Installation du groupe dev Fedora${OFF_COLOR}"
-        dnf -y groupinstall "Development Tools"
-        
-        echo -e "${BLUE}Installation des dépendances supplémentaires${OFF_COLOR}"
-        dnf -y install wget bc xen
+KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v$(echo $KERNEL_VERSION | cut -d. -f1).x/linux-$KERNEL_VERSION.tar.xz"
+KERNEL_ARCHIVE="linux-$KERNEL_VERSION.tar.xz"
+KERNEL_FOLDER="linux-$KERNEL_VERSION"
 
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Installation réussie.${OFF_COLOR}"
-        else
-            echo -e "${RED}Erreur lors de l'installation.${OFF_COLOR}"
-            exit 1
-        fi
+echo "Téléchargement du noyau $KERNEL_VERSION..."
+wget $KERNEL_URL || erreur "Échec du téléchargement du noyau"
 
-        echo -e "${YELLOW}Veuillez entrer le numéro de la dernière version du noyau disponible sur kernel.org (ex: 6.6.33):${OFF_COLOR}"
-        read kernel_version
-        kernel_url="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$kernel_version.tar.xz"
-        echo -e "${BLUE}Téléchargement du noyau version $kernel_version...${OFF_COLOR}"
-        wget $kernel_url -O linux-$kernel_version.tar.xz
+echo "Extraction de l'archive..."
+tar -xf $KERNEL_ARCHIVE || erreur "Échec de l'extraction de l'archive"
 
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Téléchargement réussi.${OFF_COLOR}"
+cd $KERNEL_FOLDER || erreur "Échec de l'accès au répertoire du noyau"
 
-            echo -e "${BLUE}Extraction de l'archive...${OFF_COLOR}"
-            tar -xf linux-$kernel_version.tar.xz
+echo "Installation des dépendances..."
+dnf install -y ncurses-devel make gcc bc bison flex elfutils-libelf-devel openssl-devel grub2 || erreur "Échec de l'installation des dépendances"
 
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}Extraction réussie.${OFF_COLOR}"
-                
-                echo -e "${YELLOW}Entrer dans le répertoire...${OFF_COLOR}"
-                cd linux-$kernel_version || { echo -e "${RED}Erreur : impossible d'entrer dans le répertoire.${OFF_COLOR}"; exit 1; }
-                
-                echo -e "${YELLOW}Préparation de la compilation${OFF_COLOR}"
-                make -j"$(nproc)" clean
-                make -j"$(nproc)" mrproper
-                
-                echo -e "${YELLOW}Lancement de la compilation du noyau${OFF_COLOR}"
-                make -j"$(nproc)" oldconfig
-                make -j"$(nproc)"
-                make -j"$(nproc)" modules
-                make -j"$(nproc)" bzImage
-                
-                echo -e "${YELLOW}Génération du System.map${OFF_COLOR}"
-                make System.map
-                
-                echo -e "${YELLOW}Installation des modules & headers${OFF_COLOR}"
-                make -j"$(nproc)" modules_install
-                make -j"$(nproc)" headers_install
-                
-                echo -e "${YELLOW}Lancement de depmod${OFF_COLOR}"
-                depmod -A
-                
-                echo -e "${YELLOW}Installation du noyau${OFF_COLOR}"
-                make -j"$(nproc)" install
-                
-                echo -e "${YELLOW}Mises à jour de la config de grub${OFF_COLOR}"
-                grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
-                
-                # Définir le nouveau noyau comme le noyau par défaut
-                new_kernel=$(ls /boot/vmlinuz-* | sort -V | tail -n 1)
-                grub2-set-default "$new_kernel"
-                
-                echo -e "${GREEN}Compilation et installation du noyau terminées avec succès.${OFF_COLOR}"
-            else
-                echo -e "${RED}Erreur lors de l'extraction.${OFF_COLOR}"
-                exit 1
-            fi
-        else
-            echo -e "${RED}Erreur lors du téléchargement.${OFF_COLOR}"
-            exit 1
-        fi
-        ;;
-    *)
-        echo -e "${RED}Ce script est destiné à Fedora release 40 (Forty) uniquement.${OFF_COLOR}"
-        exit 1
-        ;;
-esac
+echo "Configuration du noyau..."
+cp /boot/config-$(uname -r) .config || erreur "Échec de la copie de la configuration actuelle"
+make olddefconfig || erreur "Échec de la configuration"
+
+echo "Compilation du noyau..."
+make -j$(nproc) || erreur "Échec de la compilation du noyau"
+
+echo "Compilation des modules..."
+make modules_install || erreur "Échec de la compilation des modules"
+
+echo "Installation du noyau..."
+make install || erreur "Échec de l'installation du noyau"
+
+echo "Mise à jour de GRUB..."
+grub2-mkconfig -o /boot/grub2/grub.cfg || erreur "Échec de la mise à jour de GRUB"
+
+echo "Installation du noyau $KERNEL_VERSION terminée. Veuillez redémarrer votre système."
+
+exit 0
