@@ -23,16 +23,15 @@ tar -xf $KERNEL_ARCHIVE || erreur "Échec de l'extraction de l'archive"
 
 cd $KERNEL_FOLDER || erreur "Échec de l'accès au répertoire du noyau"
 
+echo "Nettoyage avant compilation..."
+make -j$(nproc) mrproper || erreur "Échec de mrproper"
+
 echo "Installation des dépendances..."
 dnf install -y ncurses-devel make gcc bc bison flex elfutils-libelf-devel openssl-devel grub2 || erreur "Échec de l'installation des dépendances"
 
 echo "Configuration du noyau..."
 cp /boot/config-$(uname -r) .config || erreur "Échec de la copie de la configuration actuelle"
-make -j$(nproc) olddefconfig || erreur "Échec de la configuration"
-
-echo "Nettoyage avant compilation..."
-make -j$(nproc) clean || erreur "Échec du nettoyage"
-make -j$(nproc) mrproper || erreur "Échec de mrproper"
+make -j$(nproc) oldconfig || erreur "Échec de la configuration"
 
 echo "Compilation du noyau..."
 make -j$(nproc) -j$(nproc) || erreur "Échec de la compilation du noyau"
