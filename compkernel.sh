@@ -30,6 +30,10 @@ echo "Configuration du noyau..."
 cp /boot/config-$(uname -r) .config || erreur "Échec de la copie de la configuration actuelle"
 make olddefconfig || erreur "Échec de la configuration"
 
+echo "Nettoyage avant compilation..."
+make clean || erreur "Échec du nettoyage"
+make mrproper || erreur "Échec de mrproper"
+
 echo "Compilation du noyau..."
 make -j$(nproc) || erreur "Échec de la compilation du noyau"
 
