@@ -9,7 +9,11 @@ if [ "$EUID" -ne 0 ]; then
     erreur "Ce script doit être exécuté avec des privilèges root. Utilisez sudo."
 fi
 
-read -p "Entrez la version du noyau à installer (ex: 5.12.9) : " KERNEL_VERSION
+if [ -z "$1" ]; then
+    erreur "Veuillez spécifier la version du noyau comme argument. Exemple : ./kernelcompil.sh 6.9.4"
+fi
+
+KERNEL_VERSION=$1
 
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v$(echo $KERNEL_VERSION | cut -d. -f1).x/linux-$KERNEL_VERSION.tar.xz"
 KERNEL_ARCHIVE="linux-$KERNEL_VERSION.tar.xz"
